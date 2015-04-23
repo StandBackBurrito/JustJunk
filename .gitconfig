@@ -19,9 +19,9 @@
     l            = log --pretty =oneline --abbrev-commit
     r            = rebase --interactive HEAD~10
     s            = -p status
-    pr           = pull --rebase
-    pom          = push origin master
-    pos          = push origin source
+    ec           = config --global -e
+    pr           = pull --rebase --prune
+    up           = !git pull --rebase --prune $@ && git submodule update --init --recursive && echo 'git on up'
     rc           = rebase --continue
     ra           = rebase --abort
     ss           = -p status -s
@@ -29,22 +29,13 @@
     lga          = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date =relative --all
     ll           = log --pretty =oneline --abbrev-commit --max-count=15
     lc           = log --stat --summary
-    up           = !git fetch --all --prune && git rebase origin/master && git submodule update && git push . origin/master:master 2> /dev/null
-    pub          = !git push origin HEAD:master && git push . HEAD:master && git checkout master
-    tpr          = tf pull --rebase --deep
-    tcd          = tf checkin --deep
-    tprs         = tf pull --rebase --shallow
-    tcds         = tf checkin --shallow
     prune        = fetch --prune
     aliases      = config --get-regexp alias
-    amend        = commit --amend
-    bfd          = branch -D
     bd           = branch -d
     b            = branch
     bl           = blame -w -M -C
     bra          = branch -ra
     brav         = branch -rav
-    branches     = branch -rav
     changed      = status -sb
     filelog      = log -u
     hist         = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue) [%an]%Creset' --abbrev-commit --date=relative
@@ -57,13 +48,21 @@
     standup      = log --since yesterday --oneline --author 'Justin Patterson'
     stats        = diff --stat
     sync         = ! git fetch upstream -v && git fetch origin -v && git checkout master && git merge upstream/master
-    undo         = reset head~
     unstage      = reset HEAD
     wdiff        = diff --word-diff
     who          = shortlog -s -e --
     dt           = difftool
     dtc          = difftool --cached
     mt           = mergetool
+    cm           = !git add -A && git commit -m
+    save         = !git add -A && git commit -m 'SAVEPOINT'
+    wip          = !git add -u && git commit -m "WIP" 
+    undo         = reset HEAD~1 --mixed
+    amend        = commit -a --amend
+    ane          = commit -a --amend --no-edit
+    wipe         = !git add -A && git commit -qm 'WIPE SAVEPOINT' && git reset HEAD~1 --hard
+    bclean       = "!f() { git branch --merged ${1-master} | grep -v " ${1-master}$" | xargs -r git branch -d; }; f"
+    pushit       = ! git push && echo "push it real good"
 [color]
     branch       = auto
     diff         = auto

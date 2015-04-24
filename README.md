@@ -1,4 +1,5 @@
 # JustJunk
 my junk
 
-<img src="http://ogsys-ci.cloudapp.net/teamcity/app/rest/builds/buildType:(id:ogflex_Package)/statusIcon"/>
+The current build status on the CI server is <a href="http://teamcity.ginnivan.net/viewType.html?buildTypeId=Humanizer_CI&guest=1">
+<img src="http://teamcity.ginnivan.net/app/rest/builds/buildType:(id:Humanizer_CI)/statusIcon"/></a>

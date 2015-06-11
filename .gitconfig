@@ -62,6 +62,7 @@
     ane          = commit -a --amend --no-edit
     wipe         = !git add -A && git commit -qm 'WIPE SAVEPOINT' && git reset HEAD~1 --hard
     bclean       = "!f() { git branch --merged ${1-master} | grep -v " ${1-master}$" | xargs -r git branch -d; }; f"
+    mm           = "!f() { git co master; git up; git co -; git merge master; }; f"
     pushit       = ! git push && echo "push it real good"
 [color]
     branch       = auto

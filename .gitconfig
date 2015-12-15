@@ -3,8 +3,6 @@
     email        = justinpatterson@gmail.com
 [push]
     default      = simple
-[credential]
-    helper       = !'C:\\Users\\justin\\AppData\\Roaming\\GitCredStore\\git-credential-winstore.exe'
 [alias]
     a            = add -A
     b            = branch
@@ -87,12 +85,14 @@
 [difftool]
     prompt       = false
 [difftool "bc4"]
-    cmd          = \"C:/Program Files (x86)/Beyond Compare 4/BComp.exe\" \"$LOCAL\" \"$REMOTE\"
+    cmd          = \"C:/Program Files/Beyond Compare 4/BComp.exe\" \"$LOCAL\" \"$REMOTE\"
 [merge]
     tool         = bc4
 [mergetool]
     prompt       = false
     keepBackup   = false
 [mergetool "bc4"]
-    cmd          = \"C:/Program Files (x86)/Beyond Compare 4/BComp.exe\" \"$LOCAL\" \"$REMOTE\" \"$BASE\" \"$MERGED\"
+    cmd          = \"C:/Program Files/Beyond Compare 4/BComp.exe\" \"$LOCAL\" \"$REMOTE\" \"$BASE\" \"$MERGED\"
     trustExitCode= true
+[credential]
+	helper = manager

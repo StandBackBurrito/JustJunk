@@ -10,8 +10,8 @@
     co           = checkout
     cb           = checkout -b
     cob          = checkout -b
-    cl           = clean -xfd -e '*.suo' -e '*.user' -e 'packages/'
-    clp          = clean -xfd -e '*.suo' -e '*.user'
+    cl           = clean -xfd -e '*.suo' -e '*.user' -e '.vs/' -e 'packages/' -e 'node_modules/' -e 'bower_components/'
+    clp          = clean -xfd -e '*.suo' -e '*.user' -e '.vs/'
     f            = fetch
     fp           = fetch --prune
     l            = log --pretty =oneline --abbrev-commit

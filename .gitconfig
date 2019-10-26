@@ -1,39 +1,58 @@
 [user]
-    name         = Justin Patterson
-    email        = justinpatterson@gmail.com
+    name = Justin Patterson
+    email = justin@addmembers.com
+[credential]
+    helper = manager
+[core]
+    autocrlf = true
+    whitespace = trailing-space,space-before-tab,indent-with-non-tab
 [push]
     default      = simple
+
+# Aliases
 [alias]
+    branch-name  = "!git rev-parse --abbrev-ref HEAD"
+    publish      = "!git push -u origin $(git branch-name)"
+    pub          = "!git publish"
+    unpublish    = "!git push origin :$(git branch-name)"
     a            = add -A
     b            = branch
     c            = checkout
     co           = checkout
+    coc          = !git co master && git fp && git clp && git up && git co $1 && git up && git clp
     cb           = checkout -b
     cob          = checkout -b
-    cl           = clean -xfd -e '*.suo' -e '*.user' -e '.vs/' -e 'packages/' -e 'node_modules/' -e 'bower_components/'
-    clp          = clean -xfd -e '*.suo' -e '*.user' -e '.vs/'
+    cl           = clean -xfd -e '*.suo' -e '*.user' -e '.vs/' -e '.cr/' -e 'packages/' -e 'node_modules/' -e 'bower_components/'
+    clp          = clean -xfd -e '*.suo' -e '*.user' -e '.vs/' -e '.cr/'
+    clps         = !git submodule foreach git clp
     f            = fetch
     fp           = fetch --prune
-    l            = log --pretty =oneline --abbrev-commit
+    l            = log --pretty=format:'%C(yellow)%h %Cred%ad %C(bold blue)%an%C(bold magenta)%d %Creset%s' --date=short
+    #l            = log --pretty=format:'%C(yellow)%h|%Cred%ad|%Cblue%an|%Cgreen%d %Creset%s' --date=short
     r            = rebase --interactive HEAD~10
     s            = -p status
     ec           = config --global -e
     pr           = pull --rebase --prune
-    up           = !git pull --rebase --prune $@ && git submodule update --init --recursive && echo 'git on up'
+    up           = !git pull --rebase --prune --recurse-submodules $@ && git submodule update --init --recursive && git submodule foreach git up && echo 'git on up'
     rc           = rebase --continue
+    sa           = submodule add
     ra           = rebase --abort
+    rh           = reset --hard
     ss           = -p status -s
-    lg           = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date =relative
-    lga          = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date =relative --all
-    ll           = log --pretty =oneline --abbrev-commit --max-count=15
+    lg           = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
+    lga          = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative --all
+    ll           = log --pretty=oneline --abbrev-commit --max-count=15
     lc           = log --stat --summary
+    find         = log --all --name-status --follow --
     prune        = fetch --prune
     aliases      = config --get-regexp alias
     bd           = branch -d
     b            = branch
+    bc           = branch --contains
     bl           = blame -w -M -C
     bra          = branch -ra
     brav         = branch -rav
+    bm           = branch --merged
     changed      = status -sb
     filelog      = log -u
     hist         = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue) [%an]%Creset' --abbrev-commit --date=relative
@@ -47,21 +66,51 @@
     stats        = diff --stat
     sync         = ! git fetch upstream -v && git fetch origin -v && git checkout master && git merge upstream/master
     unstage      = reset HEAD
-    wdiff        = diff --word-diff
     who          = shortlog -s -e --
+    wdiff        = diff --word-diff
+    d            = diff
+    dn           = diff --name-status
     dt           = difftool
     dtc          = difftool --cached
+    dtd          = difftool --dir-diff
     mt           = mergetool
     cm           = !git add -A && git commit -m
     save         = !git add -A && git commit -m 'SAVEPOINT'
-    wip          = !git add -u && git commit -m "WIP" 
+    wip          = !git add -u && git commit -m "WIP"
     undo         = reset HEAD~1 --mixed
     amend        = commit -a --amend
     ane          = commit -a --amend --no-edit
     wipe         = !git add -A && git commit -qm 'WIPE SAVEPOINT' && git reset HEAD~1 --hard
     bclean       = "!f() { git branch --merged ${1-master} | grep -v " ${1-master}$" | xargs -r git branch -d; }; f"
-    mm           = "!f() { git co master; git up; git co -; git merge master; }; f"
+    bdone        = "!f() { git checkout ${1-master} && git clp && git fp && git up && git bclean ${1-master}; }; f"
+    merged       = "!f() { git b | sed \"s/\\*//\" | xargs -r -I % sh -c 'echo %;git branch --merged %;'; }; f"
+    mm           = "!f() { git co ${1-master}; git up; git co -; git merge ${1-master}; }; f"
     pushit       = ! git push && echo "push it real good"
+    ss           = submodule status
+    g            = grep --break --heading --line-number
+    new          = !sh -c 'git log $1@{1}..$1@{0} "$@"'
+    sortdiff     = !sh -c 'git diff "$@" | grep "^[+-]" | sort --key=1.2 | uniq -u -s1'
+    migrate      = "!f(){ CURRENT=$(git symbolic-ref --short HEAD); git checkout -b $1 && git branch --force `CURRENT ${3-'$CURRENT@{u}'} && git rebase --onto ${2-master} $CURRENT; }; f"
+    # Mark a file as "assume unchanged", which means that Git will treat it
+    # as though there are no changes to it even if there are. Useful for
+    # temporary changes to tracked files
+    hide = update-index --assume-unchanged
+    unhide = update-index --no-assume-unchanged
+    unhide-all = update-index --really-refresh
+    hidden      = "!git ls-files -v | grep ^h | cut -c 3-"
+    sc           = svn clone --no-metadata --authors-file=users.txt
+    pot          = push origin --tags
+    lol          = log --graph --decorate --pretty=oneline --abbrev-commit
+    lola         = log --graph --decorate --pretty=oneline --abbrev-commit --all
+
+    # Archive to a different ref
+    archive-ref = "!f(){ branch=$(git symbolic-ref --short HEAD); if [ \"$1\" == \"--push\" ]; then git push origin refs/archive/*; elif  [ \"$branch\" == \"master\" ]; then echo Can not archive master; else git checkout master; git update-ref refs/archive/$branch refs/heads/$branch; git branch -D $branch; echo $branch archived; fi }; f"
+    list-archive-ref = for-each-ref --sort=-authordate --format='%(refname) %(objectname:short) %(contents:subject)' refs/archive/
+    arch = !git archive-ref
+    lar = !git list-archive-ref
+    delete-remote-archive = "!f() { nada=$(git ls-remote --exit-code origin refs/archive/$1); exists=$?; if [ $exists -eq 0 ]; then git push origin :refs/archive/$1; else echo archive $1 does not exist on origin; fi;}; f"
+    dra = !git delete-remote-archive
+# Colors
 [color]
     branch       = auto
     diff         = auto
@@ -71,6 +120,7 @@
     frag         = magenta bold
     old          = red bold
     new          = green bold
+    whitespace   = red reverse
 [color "status"]
     added        = yellow
     changed      = green
@@ -79,20 +129,31 @@
     current      = yellow reverse
     local        = yellow
     remote       = green
-  upstream       = bold green
+    upstream     = bold green
+
+[grep]
+	lineNumber = true
+	extendRegexp = true
+[winUpdater]
+	recentlySeenVersion = 2.20.1.windows.1
 [diff]
-    tool         = bc4
-[difftool]
-    prompt       = false
-[difftool "bc4"]
-    cmd          = \"C:/Program Files/Beyond Compare 4/BComp.exe\" \"$LOCAL\" \"$REMOTE\"
+	tool = bc
+[difftool "bc"]
+	path = c:/Program Files/Beyond Compare 4/bcomp.exe
 [merge]
-    tool         = bc4
+	tool = bc
+[mergetool "bc"]
+	path = c:/Program Files/Beyond Compare 4/bcomp.exe
+[difftool]
+	prompt = false
+[tag]
+	sort = version:refname
+[versionsort]
+	suffix = -*
+[difftool "sourcetree"]
+	cmd = '' \"$LOCAL\" \"$REMOTE\"
+[mergetool "sourcetree"]
+	cmd = "'' "
+	trustExitCode = true
 [mergetool]
-    prompt       = false
-    keepBackup   = false
-[mergetool "bc4"]
-    cmd          = \"C:/Program Files/Beyond Compare 4/BComp.exe\" \"$LOCAL\" \"$REMOTE\" \"$BASE\" \"$MERGED\"
-    trustExitCode= true
-[credential]
-	helper = manager
+	keepBackup = false

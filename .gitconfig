@@ -1,11 +1,14 @@
 [user]
-    name = Justin Patterson
-    email = justin@addmembers.com
+	name = Justin Patterson
+	email = justin@addmembers.com
 [credential]
-    helper = manager
+	helper = manager
+	useHttpPath = true
 [core]
     autocrlf = true
     whitespace = trailing-space,space-before-tab,indent-with-non-tab
+	pager = less --raw-control-chars
+	editor = code --wait
 [push]
     default      = simple
 
@@ -19,10 +22,10 @@
     b            = branch
     c            = checkout
     co           = checkout
-    coc          = !git co master && git fp && git clp && git up && git co $1 && git up && git clp
+    coc          = !git co master && git fp && git clean -xfd && git up && git co $1 && git up
     cb           = checkout -b
     cob          = checkout -b
-    cl           = clean -xfd -e '*.suo' -e '*.user' -e '.vs/' -e '.cr/' -e 'packages/' -e 'node_modules/' -e 'bower_components/'
+    cl           = clean -xfd -e '*.suo' -e '*.user' -e '.vs/' -e '.cr/' -e 'packages/' -e 'node_modules/'
     clp          = clean -xfd -e '*.suo' -e '*.user' -e '.vs/' -e '.cr/'
     clps         = !git submodule foreach git clp
     f            = fetch
@@ -41,7 +44,7 @@
     ss           = -p status -s
     lg           = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
     lga          = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative --all
-    ll           = log --pretty=oneline --abbrev-commit --max-count=15
+    ll           = log --pretty=format:'%C(yellow)%h %Cred%ad %C(bold blue)%an%C(bold magenta)%d %Creset%s' --date=short --abbrev-commit --max-count=15
     lc           = log --stat --summary
     find         = log --all --name-status --follow --
     prune        = fetch --prune
@@ -74,6 +77,7 @@
     dtc          = difftool --cached
     dtd          = difftool --dir-diff
     mt           = mergetool
+    mc           = merge --continue
     cm           = !git add -A && git commit -m
     save         = !git add -A && git commit -m 'SAVEPOINT'
     wip          = !git add -u && git commit -m "WIP"
@@ -85,8 +89,11 @@
     bdone        = "!f() { git checkout ${1-master} && git clp && git fp && git up && git bclean ${1-master}; }; f"
     merged       = "!f() { git b | sed \"s/\\*//\" | xargs -r -I % sh -c 'echo %;git branch --merged %;'; }; f"
     mm           = "!f() { git co ${1-master}; git up; git co -; git merge ${1-master}; }; f"
+    mms          = "!f() { git tm; git stash -u; git co ${1-master}; git up; git co -; git merge ${1-master}; git stash pop; git rtm; }; f"
     pushit       = ! git push && echo "push it real good"
     ss           = submodule status
+    tm           = "!f() { touch __nothing_to_see_here__; }; f"
+    rtm          = "!f() { rm __nothing_to_see_here__; }; f"
     g            = grep --break --heading --line-number
     new          = !sh -c 'git log $1@{1}..$1@{0} "$@"'
     sortdiff     = !sh -c 'git diff "$@" | grep "^[+-]" | sort --key=1.2 | uniq -u -s1'
@@ -135,25 +142,28 @@
 	lineNumber = true
 	extendRegexp = true
 [winUpdater]
-	recentlySeenVersion = 2.20.1.windows.1
+	recentlySeenVersion = 2.26.1.windows.1
 [diff]
 	tool = bc
 [difftool "bc"]
-	path = c:/Program Files/Beyond Compare 4/bcomp.exe
+	path = bcomp.exe
 [merge]
 	tool = bc
 [mergetool "bc"]
-	path = c:/Program Files/Beyond Compare 4/bcomp.exe
+	path = bcomp.exe
 [difftool]
 	prompt = false
 [tag]
 	sort = version:refname
 [versionsort]
 	suffix = -*
-[difftool "sourcetree"]
-	cmd = '' \"$LOCAL\" \"$REMOTE\"
-[mergetool "sourcetree"]
-	cmd = "'' "
-	trustExitCode = true
 [mergetool]
 	keepBackup = false
+[safe]
+	directory = C:/source/rms/RainMaker.Database
+[credential "helperselector"]
+	selected = manager-core
+[fetch]
+	prune = true
+[pull]
+	rebase = true
